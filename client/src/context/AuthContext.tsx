@@ -1,5 +1,11 @@
 import axios from "axios";
-import { useState, useContext, createContext, ReactNode } from "react";
+import {
+    useState,
+    useContext,
+    createContext,
+    ReactNode,
+    useEffect,
+} from "react";
 
 type IAuthContext = {
     isAuthenticated: boolean;
@@ -36,6 +42,18 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     const [user, setUser] = useState(initialContext.user);
 
+    useEffect(() => {
+        const fetchUser = async () => {
+            const storedUser = JSON.parse(localStorage.getItem("user")!);
+            if (storedUser) {
+                console.log(storedUser);
+                setUser(storedUser);
+                setAuthenticated(true);
+            }
+        };
+        fetchUser();
+    }, []);
+
     async function getUserData(access_token: string) {
         try {
             const response = await axios.get(
@@ -48,8 +66,9 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
                 }
             );
             console.log(response);
-            setAuthenticated(true)
+            setAuthenticated(true);
             setUser(response.data.data);
+            localStorage.setItem("user", JSON.stringify(response.data.data));
         } catch (error) {
             console.log(error);
         }
