@@ -9,10 +9,9 @@ import {
 
 type IAuthContext = {
     isAuthenticated: boolean;
-    setAuthenticated: (newState: boolean) => void;
     user: IUser;
-    setUser: (newState: IUser) => void;
     getUserData: (token: string) => void;
+    logout: () => void;
 };
 
 type IUser = {
@@ -23,14 +22,13 @@ type IUser = {
 
 const initialContext = {
     isAuthenticated: false,
-    setAuthenticated: () => {},
     user: {
         id: 0,
         email: "",
         name: "",
     },
-    setUser: () => {},
     getUserData: () => {},
+    logout: () => {},
 };
 
 const AuthContext = createContext<IAuthContext>(initialContext);
@@ -46,13 +44,19 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
         const fetchUser = async () => {
             const storedUser = JSON.parse(localStorage.getItem("user")!);
             if (storedUser) {
-                console.log(storedUser);
                 setUser(storedUser);
                 setAuthenticated(true);
             }
         };
         fetchUser();
     }, []);
+
+    async function logout() {
+        await axios.get(`${import.meta.env.VITE_API}/auth/logout`);
+        setAuthenticated(false);
+        setUser({ name: "", email: "", id: 0 });
+        localStorage.removeItem("user");
+    }
 
     async function getUserData(access_token: string) {
         try {
@@ -65,7 +69,6 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
                     },
                 }
             );
-            console.log(response);
             setAuthenticated(true);
             setUser(response.data.data);
             localStorage.setItem("user", JSON.stringify(response.data.data));
@@ -78,10 +81,9 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
         <AuthContext.Provider
             value={{
                 isAuthenticated,
-                setAuthenticated,
                 user,
-                setUser,
                 getUserData,
+                logout,
             }}
         >
             {children}
