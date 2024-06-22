@@ -3,17 +3,109 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "mysql" // or "postgresql", "sqlite", etc.
   url      = env("DATABASE_URL")
 }
 
 model User {
-  id        Int     @id @default(autoincrement())
-  email     String  @unique
+  id        Int      @id @default(autoincrement())
   name      String
+  email     String   @unique
   password  String
-  user_id   String?
-  image_src String?
-  created_at DateTime @default(now())
-  updated_at DateTime @default(now()) @updatedAt
+  userId    String?  @unique
+  imgSrc    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  Submissions Submission[]
+}
+
+model Problem {
+  id          Int          @id @default(autoincrement())
+  title       String
+  description String       @db.LongText
+  difficulty  Difficulty
+  hidden      Boolean      @default(false)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  tags        String
+  TestCases   TestCase[]
+  Submissions Submission[]
+  ProblemTags ProblemTag[]
+}
+
+model Submission {
+  id         Int              @id @default(autoincrement())
+  userId     Int
+  problemId  Int
+  language   String
+  sourceCode String           @db.LongText
+  status     SubmissionStatus @default(WAITING)
+  memory     Int?
+  time       Float?
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime         @updatedAt
+
+  User            User             @relation(fields: [userId], references: [id])
+  Problem         Problem          @relation(fields: [problemId], references: [id])
+  TestCaseResults TestCaseResult[]
+}
+
+model TestCase {
+  id             Int    @id @default(autoincrement())
+  problemId      Int
+  input          String
+  expectedOutput String
+
+  Problem         Problem          @relation(fields: [problemId], references: [id])
+  TestCaseResults TestCaseResult[]
+}
+
+model TestCaseResult {
+  id           Int            @id @default(autoincrement())
+  submissionId Int
+  testCaseId   Int
+  output       String
+  errorMessage String?
+  status       TestCaseStatus @default(ACCEPTED)
+
+  Submission Submission @relation(fields: [submissionId], references: [id])
+  TestCase   TestCase   @relation(fields: [testCaseId], references: [id])
+}
+
+model Tag {
+  id   Int    @id @default(autoincrement())
+  name String @db.VarChar(50)
+
+  ProblemTags ProblemTag[]
+}
+
+model ProblemTag {
+  id        Int @id @default(autoincrement())
+  tagId     Int
+  problemId Int
+
+  Tag     Tag     @relation(fields: [tagId], references: [id])
+  Problem Problem @relation(fields: [problemId], references: [id])
+
+  @@unique([tagId, problemId])
+}
+
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+enum SubmissionStatus {
+  ACCEPTED
+  REJECTED
+  WAITING
+}
+
+enum TestCaseStatus {
+  ACCEPTED
+  FAILED
+  TLE
+  MLE
 }

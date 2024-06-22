@@ -39,6 +39,8 @@ export async function signupController(req: Request, res: Response) {
             expiresIn: process.env.JWT_EXPIRES_IN,
         });
 
+        res.setHeader("Authorization", access_token)
+
         res.cookie(process.env.ACCESS_TOKEN_COOKIE_NAME!, access_token, {
             secure: process.env.NODE_ENV === "production",
             httpOnly: true,
@@ -77,11 +79,15 @@ export async function loginController(req: Request, res: Response) {
             expiresIn: process.env.JWT_EXPIRES_IN
         })
 
+        res.setHeader("Authorization", access_token)
+
         res.cookie(process.env.ACCESS_TOKEN_COOKIE_NAME!, access_token, {
             sameSite: "lax",
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
-            maxAge: Number(process.env.ACCESS_TOKEN_COOKIE_MAX_AGE)
+            maxAge: Number(process.env.ACCESS_TOKEN_COOKIE_MAX_AGE),
+            domain: "http://localhost:5173",
+            path: "/"
         });
 
         return res.status(200).json({ ok: true, "message": "Logged in successfully", access_token })
@@ -119,6 +125,7 @@ export async function mecontroller(req: Request, res: Response) {
 }
 
 export async function logoutController(req: Request, res: Response) {
+    res.setHeader("Authorization", "")
     res
         .clearCookie(process.env.ACCESS_TOKEN_COOKIE_NAME!)
         .status(200)
