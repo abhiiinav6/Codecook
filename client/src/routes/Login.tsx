@@ -4,9 +4,14 @@ import { FormEvent, useRef, useState } from "react";
 import { Loader2 } from "lucide-react";
 import { validateEmail } from "../lib/utils";
 import { useToast } from "../components/ui/use-toast";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 function Login() {
     const { toast } = useToast();
+    const navigate = useNavigate();
+    const authContext = useAuth();
 
     const emailRef = useRef<HTMLInputElement>(null);
     const passwordRef = useRef<HTMLInputElement>(null);
@@ -34,14 +39,27 @@ function Login() {
             setSubmittingForm(false);
             return;
         }
-
-        console.log(emailRef.current?.value, passwordRef.current?.value);
-        setTimeout(() => {
-            setSubmittingForm(false);
+        try {
+            const response = await axios.post(
+                `${import.meta.env.VITE_API}/auth/login`,
+                {
+                    email: emailRef.current?.value,
+                    password: passwordRef.current?.value,
+                }
+            );
+            if (response.data.ok) {
+                authContext.getUserData(response.data.access_token);
+                setSubmittingForm(false);
+                navigate("/");
+            }
+        } catch (error) {
+            console.log(error);
             toast({
-                title: "logged in succesfully",
+                title: error?.response.data.error as string,
+                variant: "destructive",
             });
-        }, 500);
+            setSubmittingForm(false);
+        }
     }
 
     return (
