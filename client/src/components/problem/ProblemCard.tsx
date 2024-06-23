@@ -1,7 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
-import Markdown from "react-markdown";
 import MarkdownPreview from "@uiw/react-markdown-preview";
-import remarkGfm from 'remark-gfm'
 export default function ProblemCard({
     id,
     title,
@@ -11,9 +9,9 @@ export default function ProblemCard({
     title: string;
     description: string;
 }) {
-    console.log(description)
+    console.log(description);
     return (
-        <Card>
+        <Card className="bg-gray-50">
             <CardHeader>
                 <CardTitle>
                     {id}. {title}
@@ -25,7 +23,6 @@ export default function ProblemCard({
                     style={{ padding: 16 }}
                     wrapperElement={{ "data-color-mode": "light" }}
                 />
-                 <Markdown className=" prose lg:prose-xl"  rehypePlugins={[remarkGfm]}>{description}</Markdown>
             </CardContent>
         </Card>
     );

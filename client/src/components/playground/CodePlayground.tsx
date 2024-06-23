@@ -9,6 +9,8 @@ import {
     SelectValue,
 } from "../ui/select";
 import { useState } from "react";
+import { Card } from "../ui/card";
+import { Button } from "../ui/button";
 export default function CodePlayground() {
     const [language, setLanguage] = useState("javascript");
 
@@ -16,7 +18,7 @@ export default function CodePlayground() {
         setLanguage(value);
     }
     return (
-        <div className="w-full flex flex-col gap-4 px-2">
+        <Card className="w-full flex flex-col gap-4 px-2 bg-gray-50 rounded-none">
             <div className="w-full px-2 ">
                 <Select onValueChange={handleChange} defaultValue="javascript">
                     <SelectTrigger className="w-[180px]">
@@ -36,11 +38,19 @@ export default function CodePlayground() {
                 </Select>
             </div>
             <Editor
-                className="w-full"
-                options={{ theme: "vs-dark" }}
+                className="w-full border shadow"
+                options={{
+                    minimap: {
+                        autohide: true,
+                    },
+                }}
                 language={language}
-                height="80vh"
+                height="70vh"
             />
-        </div>
+            <div className="w-full flex px-2 pb-4 justify-end gap-4">
+                <Button variant="outline">Run Code</Button>
+                <Button>Submit</Button>
+            </div>
+        </Card>
     );
 }

@@ -39,9 +39,9 @@ export default function Problem() {
     }
 
     return (
-        <main className="mt-2 border-t-2 w-full h-[90vh] flex">
-            <Tabs defaultValue="description" className="w-1/2">
-                <TabsList className="w-full justify-start py-0 bg-gray-100">
+        <main className="mt-2 border-t-2 w-full max-h-[90vh] flex">
+            <Tabs defaultValue="description" className="w-1/2 overflow-auto">
+                <TabsList className="w-full justify-start py-0 bg-gray-50">
                     <TabsTrigger
                         value="description"
                         className="py-0 px-6 my-0 h-full"
@@ -62,7 +62,7 @@ export default function Problem() {
                         description={question?.description as string}
                     />
                 </TabsContent>
-                <TabsContent value="submissions" className="px-6">
+                <TabsContent value="submissions" className="px-6 h-full">
                     <SubmissionCard />
                 </TabsContent>
             </Tabs>
