@@ -14,7 +14,8 @@
         "paths": {
             "@/*": ["./src/*"]
         },
-        "strict": true
+        "strict": true,
+        "lib": ["ES2021.String"]
         // ...
     }
 }

@@ -75,3 +75,14 @@
     @apply bg-background text-foreground;
   }
 }
+
+.markdown>*  {
+  all: revert;
+  word-wrap: break-word; /* Ensures long words will break to fit within the container */
+  word-break: break-word; /* Ensures words will break at arbitrary points to prevent overflow */
+  white-space: pre-wrap; /* Preserves whitespace and wraps text */
+  overflow-wrap: break-word; /* Prevents overflow by breaking long words */
+  overflow: auto; /* Adds a scrollbar if the content overflows */
+  max-width: 100%; /* Ensures the container does not exceed the width of its parent */
+  padding: 16px;
+}
