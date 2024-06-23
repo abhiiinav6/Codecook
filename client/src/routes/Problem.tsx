@@ -12,11 +12,44 @@ import SubmissionCard from "../components/problem/SubmissionCard";
 import { ProblemTypes } from "../types/problem";
 import ProblemNotExist from "../components/problem/ProblemNotExist";
 import CodePlayground from "../components/playground/CodePlayground";
+import { useAuth } from "../context/AuthContext";
+import { toast } from "../components/ui/use-toast";
 
 export default function Problem() {
     const { problemId } = useParams();
     const [question, setQuestion] = useState<ProblemTypes>();
     const [errorLoadingData, setErrorLoadingData] = useState("");
+    const auth = useAuth();
+
+    
+    async function handleCodeSubmission(code: string, language: string) {
+        if (!auth.isAuthenticated) {
+            toast({
+                title: "Login to submit problem",
+            });
+            return;
+        }
+        try {
+            const response = await axios.post(
+                `${import.meta.env.VITE_API}/submissions/execute`,
+                {
+                    code,
+                    language,
+                    problemId: question?.id,
+                },
+                {
+                    headers: {
+                        Authorization: auth.access_token,
+                    },
+                }
+            );
+            console.log(response.data);
+        } catch (error) {
+            toast({
+                title: "Failed to create submission",
+            });
+        }
+    }
 
     useEffect(() => {
         async function getProblemById(problemId: string) {
@@ -24,7 +57,6 @@ export default function Problem() {
                 const response = await axios.get(
                     `${import.meta.env.VITE_API}/problems/${problemId}`
                 );
-                console.log(response);
                 setQuestion(response.data);
             } catch (error) {
                 console.log(error);
@@ -67,7 +99,7 @@ export default function Problem() {
                 </TabsContent>
             </Tabs>
             <div className="w-1/2 border-l">
-                <CodePlayground />
+                <CodePlayground handleCodeSubmission={handleCodeSubmission} />
             </div>
         </main>
     );

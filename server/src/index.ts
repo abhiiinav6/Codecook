@@ -1,14 +1,20 @@
 import express, { Request, Response } from 'express'
 import { config } from 'dotenv'
 import cors from "cors"
-import { logger } from './middlewares/logger'
-import { authRouter } from './routes/auth'
 import cookieParser from 'cookie-parser'
-import { problemRouter } from './routes/problem'
 
-const app = express()
+import { logger } from './middlewares/logger'
+
+import { authRouter } from './routes/auth'
+import { problemRouter } from './routes/problem'
+import { submissionRouter } from './routes/submissions'
+
+const app = express();
+
+
 app.use(cookieParser());
 config()
+
 app.use(
   cors({
     origin: (origin, callback) => {
@@ -30,17 +36,14 @@ app.use(
 app.use(express.json())
 app.use(logger)
 
-app.get("/", (req, res) => {
-  res.send("hiiii")
+app.get("/health", (req, res) => {
+  res.status(200);
 })
 
-app.get("/ping", (req, res) => {
-  res.cookie("ping", "pong")
-  res.json({ "ping": "pong" })
-})
 
 app.use("/auth", authRouter)
 app.use("/problems", problemRouter)
+app.use("/submissions", submissionRouter)
 
 
 const server = app.listen(3069, () =>

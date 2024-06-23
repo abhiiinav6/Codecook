@@ -11,10 +11,11 @@ import {
 import { useEffect, useState } from "react";
 import { AllProblemsType } from "../types/problem";
 import ProblemTableSkeleton from "../components/problem/ProblemTableSkeleton";
-// import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/AuthContext";
 
 function Home() {
-    // const authContext = useAuth();
+    const authContext = useAuth();
+    console.log(authContext)
     const [allProblems, setProblems] = useState<AllProblemsType>();
     const [dataLoading, setDataLoading] = useState(false);
     const [dataLoadingError, setDataLoadingError] = useState("");

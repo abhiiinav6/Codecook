@@ -1,5 +1,5 @@
 import { Request, Response } from "express"
-import { prisma } from "../db";
+import { getProblem, prisma } from "../db";
 
 export async function getAllProblemsController(req: Request, res: Response) {
     try {
@@ -24,24 +24,9 @@ export async function getAllProblemsController(req: Request, res: Response) {
 
 export async function getProblemByIdController(req: Request, res: Response) {
     const { id } = req.params;
-    try {
-        const result = await prisma.problem.findUniqueOrThrow({
-            where: {
-                problem_id: id,
-                hidden: false
-            }, select: {
-                id: true,
-                title: true,
-                description: true,
-                tags: true,
-                difficulty: true,
-                TestCases: {
-                    take: 3
-                }
-            }
-        })
-        return res.status(200).json(result)
-    } catch (error) {
-        return res.status(404).json({ 'ok': false, "error": "Problem not found." })
+    const problem = await getProblem(id);
+    if (!problem) {
+        return res.status(404).json({ "message": "Problem not found." })
     }
+    return res.status(200).json( {...problem} )
 }

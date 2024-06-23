@@ -11,25 +11,39 @@ import {
 import { useState } from "react";
 import { Card } from "../ui/card";
 import { Button } from "../ui/button";
-export default function CodePlayground() {
-    const [language, setLanguage] = useState("javascript");
 
-    function handleChange(value: string) {
+export default function CodePlayground({
+    handleCodeSubmission,
+}: {
+    handleCodeSubmission: (code: string, language: string) => void;
+}) {
+    const [language, setLanguage] = useState("python");
+    const [code, setCode] = useState("");
+
+    function handleLanguageChange(value: string) {
         setLanguage(value);
     }
+    function handleEditorChange(value: string, _event: any) {
+        setCode(value);
+    }
+
+    function handleSubmit() {
+        handleCodeSubmission(code, language);
+    }
+
     return (
         <Card className="w-full flex flex-col gap-4 px-2 bg-gray-50 rounded-none">
             <div className="w-full px-2 ">
-                <Select onValueChange={handleChange} defaultValue="javascript">
+                <Select
+                    onValueChange={handleLanguageChange}
+                    defaultValue="python"
+                >
                     <SelectTrigger className="w-[180px]">
                         <SelectValue placeholder="" />
                     </SelectTrigger>
                     <SelectContent>
                         <SelectGroup>
                             <SelectLabel>Select language</SelectLabel>
-                            <SelectItem value="javascript">
-                                Javascript
-                            </SelectItem>
                             <SelectItem value="cpp">C++</SelectItem>
                             <SelectItem value="c">C</SelectItem>
                             <SelectItem value="python">Python</SelectItem>
@@ -46,10 +60,10 @@ export default function CodePlayground() {
                 }}
                 language={language}
                 height="70vh"
+                onChange={handleEditorChange}
             />
             <div className="w-full flex px-2 pb-4 justify-end gap-4">
-                <Button variant="outline">Run Code</Button>
-                <Button>Submit</Button>
+                <Button onClick={handleSubmit}>Submit</Button>
             </div>
         </Card>
     );
