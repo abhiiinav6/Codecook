@@ -4,6 +4,7 @@ import cors from "cors"
 import { logger } from './middlewares/logger'
 import { authRouter } from './routes/auth'
 import cookieParser from 'cookie-parser'
+import { problemRouter } from './routes/problem'
 
 const app = express()
 app.use(cookieParser());
@@ -39,6 +40,7 @@ app.get("/ping", (req, res) => {
 })
 
 app.use("/auth", authRouter)
+app.use("/problems", problemRouter)
 
 
 const server = app.listen(3069, () =>
