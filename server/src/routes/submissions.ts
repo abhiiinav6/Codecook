@@ -1,8 +1,9 @@
 import express from "express"
-import { executeCodeController, submitCodeController } from "../controllers/submissions";
-import { auth } from "../middlewares/auth";
+import { executeCodeController, getSubmissionByIdController, submitCodeController } from "../controllers/submissions";
 
 export const submissionRouter = express.Router();
 
 submissionRouter.post("/execute", executeCodeController)
 submissionRouter.post("/submit", submitCodeController)
+
+submissionRouter.get("/:id",getSubmissionByIdController)

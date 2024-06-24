@@ -46,7 +46,7 @@ app.use("/problems", problemRouter)
 app.use("/submissions", submissionRouter)
 
 
-const server = app.listen(3069, () =>
+const server = app.listen(3242, () =>
   console.log(`
-🚀 Server ready at: http://localhost:3069`),
+🚀 Server ready at: http://localhost:3242`),
 )
