@@ -9,7 +9,6 @@ export default function ProblemCard({
     title: string;
     description: string;
 }) {
-    console.log(description);
     return (
         <Card className="bg-gray-50">
             <CardHeader>

@@ -11,11 +11,16 @@ import {
 import { useState } from "react";
 import { Card } from "../ui/card";
 import { Button } from "../ui/button";
+import { Loader2 } from "lucide-react";
 
 export default function CodePlayground({
     handleCodeSubmission,
+    submittingProblem,
+    changeSubmittingProblem,
 }: {
     handleCodeSubmission: (code: string, language: string) => void;
+    submittingProblem: boolean;
+    changeSubmittingProblem: (value: boolean) => void;
 }) {
     const [language, setLanguage] = useState("python");
     const [code, setCode] = useState("");
@@ -63,7 +68,13 @@ export default function CodePlayground({
                 onChange={handleEditorChange}
             />
             <div className="w-full flex px-2 pb-4 justify-end gap-4">
-                <Button onClick={handleSubmit}>Submit</Button>
+                <Button onClick={handleSubmit} disabled={submittingProblem}>
+                    {submittingProblem ? (
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    ) : (
+                        "Submit"
+                    )}
+                </Button>
             </div>
         </Card>
     );

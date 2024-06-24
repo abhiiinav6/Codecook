@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
     Tabs,
     TabsContent,
@@ -19,14 +19,18 @@ export default function Problem() {
     const { problemId } = useParams();
     const [question, setQuestion] = useState<ProblemTypes>();
     const [errorLoadingData, setErrorLoadingData] = useState("");
+    const [submittingProblem, setSubmittingProblem] = useState(false);
     const auth = useAuth();
 
-    
+    const navigate = useNavigate();
+
     async function handleCodeSubmission(code: string, language: string) {
+        setSubmittingProblem(true);
         if (!auth.isAuthenticated) {
             toast({
                 title: "Login to submit problem",
             });
+            setSubmittingProblem(false);
             return;
         }
         try {
@@ -43,11 +47,13 @@ export default function Problem() {
                     },
                 }
             );
-            console.log(response.data);
+            setSubmittingProblem(false);
+            navigate(`/submissions/${response.data.submissionId}`);
         } catch (error) {
             toast({
                 title: "Failed to create submission",
             });
+            setSubmittingProblem(false);
         }
     }
 
@@ -99,7 +105,13 @@ export default function Problem() {
                 </TabsContent>
             </Tabs>
             <div className="w-1/2 border-l">
-                <CodePlayground handleCodeSubmission={handleCodeSubmission} />
+                <CodePlayground
+                    handleCodeSubmission={handleCodeSubmission}
+                    submittingProblem={submittingProblem}
+                    changeSubmittingProblem={(value) => {
+                        setSubmittingProblem(value);
+                    }}
+                />
             </div>
         </main>
     );
